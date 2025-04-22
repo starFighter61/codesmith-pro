@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeSmith.pro - Professional Developer Tools</title>
+    <meta name="description" content="Professional developer tools for code documentation, explanation, translation, README generation, and debugging.">
+    <meta name="keywords" content="code documentation, code explanation, code translation, README generator, debugging tool">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --primary-dark: #0b5ed7;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --info-color: #0dcaf0;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --white-color: #ffffff;
+            --body-bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --card-border: #e0e0e0;
+            --text-color: #333333;
+            --border-radius: 4px;
+            --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--body-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            --body-bg: #1a1a1a;
+            --card-bg: #2a2a2a;
+            --card-border: #3a3a3a;
+            --text-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--white-color);
+            border-bottom: 1px solid var(--card-border);
+            padding: 15px 0;
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .dark-mode-toggle {
+            background-color: var(--light-color);
+            border: 1px solid var(--card-border);
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color var(--transition-speed);
+        }
+
+        .dark-mode .dark-mode-toggle {
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            border-bottom: 1px solid var(--card-border);
+            overflow-x: auto;
+        }
+
+        .tab-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: var(--light-color);
+            border: 1px solid var(--card-border);
+            border-bottom: none;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            margin-right: 5px;
+            transition: all var(--transition-speed);
+        }
+
+        .tab-item.active {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            border-color: var(--primary-color);
+        }
+
+        .tab-item.premium-feature:after {
+            content: "★";
+            margin-left: 5px;
+            color: var(--warning-color);
+        }
+
+        .dark-mode .tab-item {
+            background-color: var(--dark-color);
+            border-color: var(--card-border);
+        }
+
+        .dark-mode .tab-item.active {
+            background-color: var(--primary-color);
+        }
+
+        /* Content Sections */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .card-title {
+            font-size: 20px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        textarea, select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius);
+            background-color: var(--white-color);
+            color: var(--text-color);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+        }
+
+        .dark-mode textarea, .dark-mode select, .dark-mode input {
+            background-color: #333;
+            color: var(--white-color);
+            border-color: #444;
+        }
+
+        textarea {
+            min-height: 150px;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color var(--transition-speed);
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Result Section */
+        .result-section {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result-content {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+        }
+
+        .dark-mode .result-content {
+            background-color: #333;
+        }
+
+        /* Usage indicator styling */
+        .usage-indicator {
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: var(--secondary-color);
+        }
+
+        .usage-text {
+            margin-bottom: 5px;
+        }
+
+        .usage-bar {
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .usage-progress {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .usage-warning .usage-text {
+            color: var(--warning-color);
+        }
+
+        .usage-warning .usage-progress {
+            background-color: var(--warning-color);
+        }
+
+        /* Upgrade prompt styling */
+        .upgrade-prompt {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .upgrade-content {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .upgrade-content h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+
+        .upgrade-content ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .upgrade-content li {
+            margin-bottom: 8px;
+        }
+
+        .upgrade-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--secondary-color);
+            color: var(--text-color);
+        }
+
+        /* Loading Indicator */
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading::after {
+            content: "";
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--light-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error Message */
+        .error-message {
+            display: none;
+            background-color: var(--danger-color);
+            color: white;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--white-color);
+            border-top: 1px solid var(--card-border);
+            padding: 20px 0;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .dark-mode footer {
+            background-color: var(--dark-color);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            font-size: 14px;
+            color: var(--secondary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab-item {
+                margin-bottom: 5px;
+                flex: 1 0 auto;
+                text-align: center;
+            }
+            
+            .header-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .logo {
+                margin-bottom: 10px;
+            }
+
+            .upgrade-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1 class="logo">CodeSmith.pro</h1>
+            <button class="dark-mode-toggle" id="darkModeToggle">
+                <i class="fas fa-moon"></i> Toggle Dark Mode
+            </button>
+        </div>
+    </header>
+
+    <div class="container">
+        <ul class="tabs" id="tabs">
+            <li class="tab-item active" data-tab="documentation">Documentation</li>
+            <li class="tab-item" data-tab="explanation">Explain</li>
+            <li class="tab-item premium-feature" data-tab="translation">Translate</li>
+            <li class="tab-item" data-tab="readme">README</li>
+            <li class="tab-item premium-feature" data-tab="debug">Debug</li>
+        </ul>
+
+        <!-- Documentation Tab -->
+        <div class="tab-content active" id="documentation">
+            <div class="card">
+                <h2 class="card-title">Generate Code Documentation</h2>
+                <div id="documentForm">
+                    <div class="form-group">
+                        <label for="doc-code">Enter your code:</label>
+                        <textarea id="doc-code" name="code" placeholder="Paste your code here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="doc-language">Select language:</label>
+                        <select id="doc-language" name="language">
+                            <option value="Python">Python</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="Java">Java</option>
+                            <option value="C++">C++</option>
+                            <option value="C#">C#</option>
+                            <option value="PHP">PHP</option>
+                            <option value="Ruby">Ruby</option>
+                            <option value="Go">Go</option>
+                            <option value="TypeScript">TypeScript</option>
+                            <option value="Swift">Swift</option>
+                            <option value="Kotlin">Kotlin</option>
+                        </select>
+                    </div>
+                    <button class="btn" id="docGenerateBtn">Generate Documentation</button>
+                </div>
+                <div class="loading" id="doc-loading"></div>
+                <div class="error-message" id="doc-error"></div>
+                <div class="result-section" id="doc-result-section">
+                    <h3>Generated Documentation:</h3>
+                    <div class="result-content" id="doc-result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Explanation Tab -->
+        <div class="tab-content" id="explanation">
+            <div class="card">
+                <h2 class="card-title">Explain Code</h2>
+                <div id="explainForm">
+                    <div class="form-group">
+                        <label for="explain-code">Enter your code:</label>
+                        <textarea id="explain-code" name="code" placeholder="Paste your code here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="explain-language">Select language:</label>
+                        <select id="explain-language" name="language">
+                            <option value="Python">Python</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="Java">Java</option>
+                            <option value="C++">C++</option>
+                            <option value="C#">C#</option>
+                            <option value="PHP">PHP</option>
+                            <option value="Ruby">Ruby</option>
+                            <option value="Go">Go</option>
+                            <option value="TypeScript">TypeScript</option>
+                            <option value="Swift">Swift</option>
+                            <option value="Kotlin">Kotlin</option>
+                        </select>
+                    </div>
+                    <button class="btn" id="explainGenerateBtn">Explain Code</button>
+                </div>
+                <div class="loading" id="explain-loading"></div>
+                <div class="error-message" id="explain-error"></div>
+                <div class="result-section" id="explain-result-section">
+                    <h3>Explanation:</h3>
+                    <div class="result-content" id="explain-result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Translation Tab -->
+        <div class="tab-content" id="translation">
+            <div class="card">
+                <h2 class="card-title">Translate Code <span class="text-yellow-500">★ Premium</span></h2>
+                <div id="translateForm">
+                    <div class="form-group">
+                        <label for="translate-code">Enter your code:</label>
+                        <textarea id="translate-code" name="code" placeholder="Paste your code here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="translate-source-language">Source language:</label>
+                        <select id="translate-source-language" name="source_language">
+                            <option value="Python">Python</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="Java">Java</option>
+                            <option value="C++">C++</option>
+                            <option value="C#">C#</option>
+                            <option value="PHP">PHP</option>
+                            <option value="Ruby">Ruby</option>
+                            <option value="Go">Go</option>
+                            <option value="TypeScript">TypeScript</option>
+                            <option value="Swift">Swift</option>
+                            <option value="Kotlin">Kotlin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="translate-target-language">Target language:</label>
+                        <select id="translate-target-language" name="target_language">
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="Python">Python</option>
+                            <option value="Java">Java</option>
+                            <option value="C++">C++</option>
+                            <option value="C#">C#</option>
+                            <option value="PHP">PHP</option>
+                            <option value="Ruby">Ruby</option>
+                            <option value="Go">Go</option>
+                            <option value="TypeScript">TypeScript</option>
+                            <option value="Swift">Swift</option>
+                            <option value="Kotlin">Kotlin</option>
+                        </select>
+                    </div>
+                    <button class="btn" id="translateGenerateBtn">Translate Code</button>
+                </div>
+                <div class="loading" id="translate-loading"></div>
+                <div class="error-message" id="translate-error"></div>
+                <div class="result-section" id="translate-result-section">
+                    <h3>Translated Code:</h3>
+                    <div class="result-content" id="translate-result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- README Tab -->
+        <div class="tab-content" id="readme">
+            <div class="card">
+                <h2 class="card-title">Generate README</h2>
+                <div id="readmeForm">
+                    <div class="form-group">
+                        <label for="readme-description">Project Description:</label>
+                        <textarea id="readme-description" name="description" placeholder="Describe your project here..."></textarea>
+                    </div>
+                    <button class="btn" id="readmeGenerateBtn">Generate README</button>
+                </div>
+                <div class="loading" id="readme-loading"></div>
+                <div class="error-message" id="readme-error"></div>
+                <div class="result-section" id="readme-result-section">
+                    <h3>Generated README:</h3>
+                    <div class="result-content" id="readme-result"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug Tab -->
+        <div class="tab-content" id="debug">
+            <div class="card">
+                <h2 class="card-title">Debug Code <span class="text-yellow-500">★ Premium</span></h2>
+                <div id="debugForm">
+                    <div class="form-group">
+                        <label for="debug-code">Enter your code:</label>
+                        <textarea id="debug-code" name="code" placeholder="Paste your code here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="debug-language">Select language:</label>
+                        <select id="debug-language" name="language">
+                            <option value="Python">Python</option>
+                            <option value="JavaScript">JavaScript</option>
+                            <option value="Java">Java</option>
+                            <option value="C++">C++</option>
+                            <option value="C#">C#</option>
+                            <option value="PHP">PHP</option>
+                            <option value="Ruby">Ruby</option>
+                            <option value="Go">Go</option>
+                            <option value="TypeScript">TypeScript</option>
+                            <option value="Swift">Swift</option>
+                            <option value="Kotlin">Kotlin</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="debug-error">Error Message:</label>
+                        <textarea id="debug-error" name="error_message" placeholder="Paste the error message here..."></textarea>
+                    </div>
+                    <button class="btn" id="debugGenerateBtn">Debug Code</button>
+                </div>
+                <div class="loading" id="debug-loading"></div>
+                <div class="error-message" id="debug-error-message"></div>
+                <div class="result-section" id="debug-result-section">
+                    <h3>Debug Results:</h3>
+                    <div class="result-content" id="debug-result"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upgrade Prompt Modal (hidden by default) -->
+    <div class="upgrade-prompt" id="upgradePrompt">
+        <div class="upgrade-content">
+            <h3>Upgrade to Premium</h3>
+            <p>You've reached your daily limit for free requests or tried to access a premium feature.</p>
+            <p>Upgrade to premium for:</p>
+            <ul>
+                <li><i class="fas fa-check text-green-500"></i> Unlimited requests</li>
+                <li><i class="fas fa-check text-green-500"></i> Code translation between languages</li>
+                <li><i class="fas fa-check text-green-500"></i> Advanced debugging assistance</li>
+                <li><i class="fas fa-check text-green-500"></i> Priority processing</li>
+            </ul>
+            <div class="upgrade-actions">
+                <button class="btn btn-primary" id="upgradeButton">Upgrade Now</button>
+                <button class="btn btn-outline" id="closeUpgradePrompt">Maybe Later</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 CodeSmith.pro | Professional Developer Tools</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching
+            const tabs = document.querySelectorAll('.tab-item');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // Check if premium feature
+                    if (tab.classList.contains('premium-feature')) {
+                        showUpgradePrompt();
+                        return;
+                    }
+                    
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Dark mode toggle
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const body = document.body;
+            
+            // Check for saved dark mode preference
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                body.classList.add('dark-mode');
+            }
+            
+            darkModeToggle.addEventListener('click', () => {
+                if (body.classList.contains('dark-mode')) {
+                    body.classList.remove('dark-mode');
+                    localStorage.setItem('darkMode', 'disabled');
+                } else {
+                    body.classList.add('dark-mode');
+                    localStorage.setItem('darkMode', 'enabled');
+                }
+            });
+
+            // Function to handle API responses and display usage information
+            function handleApiResponse(data, resultElementId, resultSectionId) {
+                const resultElement = document.getElementById(resultElementId);
+                const resultSection = document.getElementById(resultSectionId);
+                
+                // Display the result
+                if (data.documentation) resultElement.textContent = data.documentation;
+                if (data.explanation) resultElement.textContent = data.explanation;
+                if (data.translated_code) resultElement.textContent = data.translated_code;
+                if (data.readme_content) resultElement.textContent = data.readme_content;
+                if (data.explanation && resultElementId === 'debug-result') resultElement.textContent = data.explanation;
+                
+                resultSection.style.display = 'block';
+                
+                // Check if usage info exists
+                if (data.usage) {
+                    // Create or update usage indicator
+                    let usageElement = document.getElementById(`${resultSectionId}-usage`);
+                    if (!usageElement) {
+                        usageElement = document.createElement('div');
+                        usageElement.id = `${resultSectionId}-usage`;
+                        usageElement.className = 'usage-indicator';
+                        resultSection.insertBefore(usageElement, resultSection.firstChild);
+                    }
+                    
+                    // Calculate percentage for progress bar
+                    const percentUsed = Math.min((data.usage.used / data.usage.limit) * 100, 100);
+                    
+                    // Update usage display
+                    usageElement.innerHTML = `
+                        <div class="usage-text">
+                            Usage: ${data.usage.used}/${data.usage.limit} requests today 
+                            (${data.usage.remaining} remaining)
+                        </div>
+                        <div class="usage-bar">
+                            <div class="usage-progress" style="width: ${percentUsed}%"></div>
+                        </div>
+                    `;
+                    
+                    // Add warning class if running low
+                    if (data.usage.remaining <= 2) {
+                        usageElement.classList.add('usage-warning');
+                    } else {
+                        usageElement.classList.remove('usage-warning');
+                    }
+                }
+            }
+
+            // Function to display upgrade prompt
+            function showUpgradePrompt() {
+                document.getElementById('upgradePrompt').style.display = 'flex';
+            }
+            
+            // Handle upgrade prompt buttons
+            document.getElementById('closeUpgradePrompt').addEventListener('click', () => {
+                document.getElementById('upgradePrompt').style.display = 'none';
+            });
+            
+            document.getElementById('upgradeButton').addEventListener('click', () => {
+                // For now, just show an alert since we don't have actual payment processing yet
+                alert('Premium features coming soon! This will redirect to payment processing in the future.');
+                document.getElementById('upgradePrompt').style.display = 'none';
+            });
+
+            // Form submission handlers
+            setupFormSubmission('docGenerateBtn', '/document', {
+                code: () => document.getElementById('doc-code').value,
+                language: () => document.getElementById('doc-language').value
+            }, 'doc-result', 'doc-loading', 'doc-error', 'doc-result-section');
+
+            setupFormSubmission('explainGenerateBtn', '/explain', {
+                code: () => document.getElementById('explain-code').value,
+                language: () => document.getElementById('explain-language').value
+            }, 'explain-result', 'explain-loading', 'explain-error', 'explain-result-section');
+
+            setupFormSubmission('translateGenerateBtn', '/translate', {
+                code: () => document.getElementById('translate-code').value,
+                source_language: () => document.getElementById('translate-source-language').value,
+                target_language: () => document.getElementById('translate-target-language').value
+            }, 'translate-result', 'translate-loading', 'translate-error', 'translate-result-section');
+
+            setupFormSubmission('readmeGenerateBtn', '/readme', {
+                description: () => document.getElementById('readme-description').value
+            }, 'readme-result', 'readme-loading', 'readme-error', 'readme-result-section');
+
+            setupFormSubmission('debugGenerateBtn', '/debug', {
+                code: () => document.getElementById('debug-code').value,
+                language: () => document.getElementById('debug-language').value,
+                error_message: () => document.getElementById('debug-error').value
+            }, 'debug-result', 'debug-loading', 'debug-error-message', 'debug-result-section');
+
+            function setupFormSubmission(buttonId, endpoint, getFormData, resultId, loadingId, errorId, resultSectionId) {
+                document.getElementById(buttonId).addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // For premium features, show upgrade prompt instead of submitting
+                    if ((endpoint === '/translate' || endpoint === '/debug') && 
+                        !document.getElementById(buttonId).classList.contains('premium-enabled')) {
+                        showUpgradePrompt();
+                        return;
+                    }
+                    
+                    // Clear previous results and show loading
+                    const resultElement = document.getElementById(resultId);
+                    const loadingElement = document.getElementById(loadingId);
+                    const errorElement = document.getElementById(errorId);
+                    const resultSection = document.getElementById(resultSectionId);
+                    
+                    resultElement.textContent = '';
+                    if (errorElement) errorElement.style.display = 'none';
+                    if (resultSection) resultSection.style.display = 'none';
+                    if (loadingElement) loadingElement.style.display = 'block';
+                    
+                    // Get form data
+                    const formData = {};
+                    for (const key in getFormData) {
+                        formData[key] = getFormData[key]();
+                    }
+                    
+                    // Input validation
+                    let hasError = false;
+                    
+                    // Check required fields
+                    if (endpoint === '/document' || endpoint === '/explain' || endpoint === '/translate' || endpoint === '/debug') {
+                        if (!formData.code || formData.code.trim() === '') {
+                            errorElement.textContent = 'Please enter your code';
+                            errorElement.style.display = 'block';
+                            loadingElement.style.display = 'none';
+                            hasError = true;
+                        }
+                    }
+                    
+                    if (endpoint === '/readme') {
+                        if (!formData.description || formData.description.trim() === '') {
+                            errorElement.textContent = 'Please enter a project description';
+                            errorElement.style.display = 'block';
+                            loadingElement.style.display = 'none';
+                            hasError = true;
+                        }
+                    }
+                    
+                    if (hasError) return;
+                    
+                    // Send request to Flask backend
+                    fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            if (response.status === 429) {
+                                // Usage limit exceeded
+                                return response.json().then(data => {
+                                    throw new Error(data.message || 'Usage limit exceeded');
+                                });
+                            } else if (response.status === 403) {
+                                // Premium feature access denied
+                                return response.json().then(data => {
+                                    throw new Error(data.message || 'Premium feature');
+                                });
+                            } else {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (loadingElement) loadingElement.style.display = 'none';
+                        
+                        if (data.status === 'error') {
+                            if (errorElement) {
+                                errorElement.textContent = data.message || 'An error occurred';
+                                errorElement.style.display = 'block';
+                            }
+                            
+                            // Show upgrade prompt if appropriate
+                            if (data.message && (data.message.includes('premium') || data.message.includes('limit'))) {
+                                showUpgradePrompt();
+                            }
+                        } else {
+                            // Handle success with usage info
+                            handleApiResponse(data, resultId, resultSectionId);
+                        }
+                    })
+                    .catch(error => {
+                        if (loadingElement) loadingElement.style.display = 'none';
+                        if (errorElement) {
+                            errorElement.textContent = 'Error: ' + error.message;
+                            errorElement.style.display = 'block';
+                        }
+                        console.error('Error:', error);
+                        
+                        // Show upgrade prompt if it's a usage limit error or premium feature error
+                        if (error.message.includes('limit') || error.message.includes('premium') || error.message.includes('upgrade')) {
+                            showUpgradePrompt();
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
